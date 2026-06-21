@@ -15,42 +15,103 @@ This repository bundles a collection of **Opencode skills** that help you work w
 
 ---
 
-*Generated automatically by Opencode.*
 
-## Playwright Test Commands
+# Install dependencies
 
-Run any of the 27 test configurations using the pattern:
+- npm run install
 
-```bash
-npx playwright test --project=<app>-<type>-<stage> tests/<type>/<app>
-```
+# To run specific user in dev, which is belong to specific part of application with a tag
 
-| App     | Type       | Stage   | Command                                                                               |
-| ------- | ---------- | ------- | ------------------------------------------------------------------------------------- |
-| app     | e2e        | dev     | `npx playwright test --project=app-e2e-dev tests/e2e/app`                           |
-| app     | e2e        | preprod | `npx playwright test --project=app-e2e-preprod tests/e2e/app`                       |
-| app     | e2e        | prod    | `npx playwright test --project=app-e2e-prod tests/e2e/app`                          |
-| app     | api        | dev     | `npx playwright test --project=app-api-dev tests/api/app`                           |
-| app     | api        | preprod | `npx playwright test --project=app-api-preprod tests/api/app`                       |
-| app     | api        | prod    | `npx playwright test --project=app-api-prod tests/api/app`                          |
-| app     | screenshot | dev     | `npx playwright test --project=app-screenshot-dev tests/screenshot/app`             |
-| app     | screenshot | preprod | `npx playwright test --project=app-screenshot-preprod tests/screenshot/app`         |
-| app     | screenshot | prod    | `npx playwright test --project=app-screenshot-prod tests/screenshot/app`            |
-| admin   | e2e        | dev     | `npx playwright test --project=admin-e2e-dev tests/e2e/admin`                       |
-| admin   | e2e        | preprod | `npx playwright test --project=admin-e2e-preprod tests/e2e/admin`                   |
-| admin   | e2e        | prod    | `npx playwright test --project=admin-e2e-prod tests/e2e/admin`                      |
-| admin   | api        | dev     | `npx playwright test --project=admin-api-dev tests/api/admin`                       |
-| admin   | api        | preprod | `npx playwright test --project=admin-api-preprod tests/api/admin`                   |
-| admin   | api        | prod    | `npx playwright test --project=admin-api-prod tests/api/admin`                      |
-| admin   | screenshot | dev     | `npx playwright test --project=admin-screenshot-dev tests/screenshot/admin`         |
-| admin   | screenshot | preprod | `npx playwright test --project=admin-screenshot-preprod tests/screenshot/admin`     |
-| admin   | screenshot | prod    | `npx playwright test --project=admin-screenshot-prod tests/screenshot/admin`        |
-| lending | e2e        | dev     | `npx playwright test --project=lending-e2e-dev tests/e2e/lending`                   |
-| lending | e2e        | preprod | `npx playwright test --project=lending-e2e-preprod tests/e2e/lending`               |
-| lending | e2e        | prod    | `npx playwright test --project=lending-e2e-prod tests/e2e/lending`                  |
-| lending | api        | dev     | `npx playwright test --project=lending-api-dev tests/api/lending`                   |
-| lending | api        | preprod | `npx playwright test --project=lending-api-preprod tests/api/lending`               |
-| lending | api        | prod    | `npx playwright test --project=lending-api-prod tests/api/lending`                  |
-| lending | screenshot | dev     | `npx playwright test --project=lending-screenshot-dev tests/screenshot/lending`     |
-| lending | screenshot | preprod | `npx playwright test --project=lending-screenshot-preprod tests/screenshot/lending` |
-| lending | screenshot | prod    | `npx playwright test --project=lending-screenshot-prod tests/screenshot/lending`    |
+- TEST_ENV=dev method=browser SINGLE_LOGIN_ACCOUNT=OwnerBB npx playwright test tests/e2e --project=chromium --grep @companies
+- TEST_ENV=dev method=browser SINGLE_LOGIN_ACCOUNT=SuperAdmin npx playwright test tests/e2e --project=chromium --grep @global
+- TEST_ENV=dev method=browser SINGLE_LOGIN_ACCOUNT=Admin npx playwright test tests/e2e --project=chromium --grep @admin
+- TEST_ENV=dev method=browser SINGLE_LOGIN_ACCOUNT=User1 npx playwright test tests/e2e --project=chromium --grep @app
+- TEST_ENV=dev method=browser SINGLE_LOGIN_ACCOUNT=CorpIP npx playwright test tests/e2e/app/otc.spec.js --project=chromium --grep @app
+
+# API tesing of admin app
+
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=ApiSuperAdmin npx playwright test tests/api --project=api-tests --grep @super
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=ApiAdmin npx playwright test tests/api --project=api-tests --grep @fulladmin
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=ApiReadAdmin npx playwright test tests/api --project=api-tests --grep @readadmin
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=ApiAdmin npx playwright test tests/api --project=api-tests --grep @pokoadmin
+- TEST_ENV=pokemon method=api SINGLE_LOGIN_ACCOUNT=ApiAdmin npx playwright test tests/api --project=api-tests --grep @fulladmin
+- TEST_ENV=pokemon method=api SINGLE_LOGIN_ACCOUNT=ApiAdmin npx playwright test tests/api --project=api-tests --grep @pokoadmin
+- TEST_ENV=pokemon method=api SINGLE_LOGIN_ACCOUNT=ApiSuperAdmin npx playwright test tests/api --project=api-tests --grep @pokosuper
+
+# API tesing of app on .dev
+
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=Partner1 npx playwright test tests/api --project=api-tests --grep @partner1
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=ApiUser1 npx playwright test tests/api --project=api-tests --grep @user1 --workers=10
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=AdminApp npx playwright test tests/api --project=api-tests --grep @adminapp --workers=10
+- TEST_ENV=dev method=api SINGLE_LOGIN_ACCOUNT=OverdraftUser npx playwright test tests/api --project=api-tests --grep @overdraft
+- TEST_ENV=dev method=api npx playwright test tests/api --project=api-public --grep @other
+- TEST_ENV=dev method=api npx playwright test tests/api --project=api-public --grep @public
+- TEST_ENV=dev method=api npx playwright test tests/api --project=api-public --grep @bbpro
+
+API tesing of app on prod
+
+- TEST_ENV=prod method=api SINGLE_LOGIN_ACCOUNT=Partner1 npx playwright test tests/api --project=api-tests --grep @partner1
+
+API tesing of app on .team1
+
+- TEST_ENV=pokemon method=api SINGLE_LOGIN_ACCOUNT=Partner1 npx playwright test tests/api --project=api-tests --grep @partner1
+- TEST_ENV=pokemon method=api npx playwright test tests/api --project=api-public --grep @public
+
+# To run specific user in prod, which is belong to specific part of application with a tag
+
+- TEST_ENV=prod SINGLE_LOGIN_ACCOUNT=User1 npx playwright test tests/e2e/app --project=chromium --grep @prod --retries=1
+
+# Screenshot testing for mobile devices:
+
+- TEST_ENV=dev SINGLE_LOGIN_ACCOUNT=User1 npx playwright test tests/visual/app --project=android-app --workers=2
+- TEST_ENV=dev SINGLE_LOGIN_ACCOUNT=User1 npx playwright test tests/visual/app --project=ios-app --workers=2
+- TEST_ENV=dev npx playwright test tests/visual/lending --project=android-lending --workers=2
+- TEST_ENV=dev npx playwright test tests/visual/lending --project=ios-lending --workers=2
+
+UI mode:
+
+- TEST_ENV=dev SINGLE_LOGIN_ACCOUNT=User1 npx playwright test --ui --grep @app
+
+# Stage control command
+
+- TEST_ENV=dev //command to run tests in developer stage
+- TEST_ENV=prod //command to run tests in production stage
+
+# Best practice to run test runner for lending
+
+- TEST_ENV=dev npx playwright test tests/e2e/lending --project=lending-chromium --grep @lending
+- TEST_ENV=prod npx playwright test tests/e2e/lending --project=lending-chromium --grep @lending
+
+# Extra command for flacky tests
+
+- --retries=1 //allowing to rerunt test n times
+- @grep{tagName} //allowing to use tageted part of application
+- --debug //debbugin mode
+
+# To run specific browser
+
+- --project=firefox
+- --project=chromium
+- --project=webkit
+
+# To run e2e specific folder
+
+- tests/e2e/app //all user applications tests
+- tests/e2e/admin //all admin application tests
+- tests/e2e/lending //all lending tests
+
+# Common tags:
+
+- @app //for run test in user application
+- @admin //for run test in admin application
+- @lending //for run lending page
+
+# To run codegen
+
+- npx playwright codegen https://dev.bitbanker.org/
+- npx playwright codegen --device="iPhone 15 Pro" https://dev.bitbanker.org/
+
+# Updating screenshots
+
+- TEST_ENV=prod npx playwright test tests/visual --project=ios-lending --update-snapshots
+- TEST_ENV=dev npx playwright test tests/visual --project=ios-lending --update-snapshots
