@@ -1,63 +1,84 @@
+// playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import path from 'path';
 
-// Helper to load environment variables for a given stage
-function loadEnv(stage: 'dev' | 'preprod' | 'prod') {
-  const envPath = path.resolve(__dirname, `.env.${stage}`);
-  dotenv.config({ path: envPath });
-}
-
-// Factory that creates a Playwright project for a specific app, test type, and stage
-function makeProject(
-  app: 'lending' | 'app' | 'admin',
-  type: 'e2e' | 'api' | 'screenshot',
-  stage: 'dev' | 'preprod' | 'prod'
-) {
-  const name = `${app}-${type}-${stage}`;
-  loadEnv(stage);
-
-  const base = {
-    baseURL: process.env.BASE_URL,
-    auth: {
-      username: process.env.USERNAME,
-      password: process.env.PASSWORD,
-    },
-  };
-
-  const use: Record<string, any> = { ...base };
-
-  // Browser/device selection per test type
-  if (type === 'e2e') {
-    Object.assign(use, devices['Desktop Chrome']);
-  } else if (type === 'screenshot') {
-    use.viewport = { width: 1280, height: 720 };
-    Object.assign(use, devices['Desktop Chrome']);
-  }
-  // API tests do not need a browser – keep defaults
-
-  return {
-    name,
-    testDir: `tests/${type}/${app}`,
-    use,
-  };
-}
-
-// Build the matrix: 3 apps × 3 types × 3 stages = 27 projects
-const apps = ['lending', 'app', 'admin'] as const;
-const types = ['e2e', 'api', 'screenshot'] as const;
-const stages = ['dev', 'preprod', 'prod'] as const;
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
+  // ── Test discovery ──────────────────────────────────────────────
   testDir: './tests',
+  testMatch: '**/*.spec.ts',
+
+  // ── Execution ───────────────────────────────────────────────────
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  use: {
-    trace: 'on-first-retry',
+  forbidOnly: !!process.env.CI,       // fail CI if test.only left in
+  retries: process.env.CI ? 2 : 0,    // retry flakes in CI only
+  workers: process.env.CI ? '50%' : undefined, // half CPU in CI, auto locally
+
+  // ── Reporting ───────────────────────────────────────────────────
+  reporter: process.env.CI
+    ? [['html', { open: 'never' }], ['github']]
+    : [['html', { open: 'on-failure' }]],
+
+  // ── Timeouts ────────────────────────────────────────────────────
+  timeout: 30_000,                     // per-test timeout
+  expect: {
+    timeout: 5_000,                    // per-assertion retry timeout
   },
-  projects: apps
-    .flatMap(app => types.flatMap(type => stages.map(stage => makeProject(app, type, stage)))),
+
+  // ── Shared browser context options ──────────────────────────────
+  use: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    storageState: '.auth/user.json',
+    actionTimeout: 10_000,             // click, fill, etc.
+    navigationTimeout: 15_000,         // goto, waitForURL, etc.
+
+    // Artifact collection
+    trace: 'on-first-retry',          // full trace on first retry only
+    screenshot: 'only-on-failure',     // screenshot on failure
+    video: 'retain-on-failure',        // video only kept for failures
+
+    // Sensible defaults
+    locale: 'en-US',
+    timezoneId: 'America/New_York',
+    extraHTTPHeaders: {
+      'x-test-automation': 'playwright',
+    },
+  },
+
+  // ── Projects (browser targets) ─────────────────────────────────
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 7'] },
+    },
+    {
+      name: 'mobile-safari',
+      use: { ...devices['iPhone 14'] },
+    },
+  ],
+
+  // ── Dev server ──────────────────────────────────────────────────
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,                  // 2 min for cold builds
+    stdout: 'pipe',
+    stderr: 'pipe',
+  },
 });
