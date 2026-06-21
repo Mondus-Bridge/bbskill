@@ -1,0 +1,5 @@
+partner_id,external_id,last_name,first_name,middle_name,email,phone_number,birth_date,passport_number,passport_issued_date,passport_issuing_country,inn,country,state,post_index,city,city_en,street,street_en,street_extra,building_name,building_number,flat_number,,,
+1853,EXT1061,Арсаев,Денис,Супьянович,arsaev.d@example.com,79111001061,04.06.1982,4510123061,20.06.2002,RUS,"""""",RUS,Чечня,366300,Шали,Shali,улица Кадырова,Kadyrova street,str,,55,10,,,
+1853,EXT1062,Арсаев,Ирисхан,Супьянович,arsaev.i@example.com,79111001062,24.03.1986,4510123062,05.04.2006,RUS,"""""",RUS,Чечня,366300,Шали,Shali,улица Иванова,Ivanova street,str,,8,64,,,
+1853,EXT1063,Бабенко,Алексей,Сергеевич,babenko.a@example.com,79111001063,10.01.1989,4510123063,20.01.2009,RUS,"""""",RUS,Киргизия,722900,Нарын,Naryn,улица Советская,Sovetskaya street,str,,20,41,,,
+1853,EXT1064,Бабенков,Артем,Дмитриевич,babenkov.a@example.com,79111001064,15.10.2007,4510123064,01.11.2025,RUS,"""""",RUS,0,400000,Волгоград,Volgograd,проспект Ленина,Lenina avenue,ave,,14,33,,,

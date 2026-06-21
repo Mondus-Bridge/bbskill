@@ -1,0 +1,2 @@
+partner_id,external_id,last_name,first_name,middle_name,email,phone_number,birth_date,passport_number,passport_issued_date,passport_issuing_country,inn,country,state,post_index,city,city_en,street,street_en,street_extra,building_name,building_number,flat_number
+1853,EXT1463434343,Иванов,Александра,Сергеевич,ivanov.a1@example.ru,79101234502,12.05.1985,4510123404,15.06.2005,RUS,"""770101010101""",RUS,0,394000,Воронеж,Voronezh,Ленинский проспект,Leninskiy avenue,ave,west tower,1,12

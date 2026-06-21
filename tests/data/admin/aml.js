@@ -1,0 +1,105 @@
+export const amlCurrenciesData = [
+    {currency: "BTC", data:{
+  "incoming_wallet_checks_enabled": true,
+  "invoice_checks_enabled": true,
+  "operator_notification_interval_minutes": 60,
+  "operator_telegram_chat_id": "-5014592506",
+  "general_risk_score_threshold": 50,
+  "check_risky_categories": true,
+  "check_suspicious_categories": false,
+  "check_reliable_categories": false,
+  "check_undefined_categories": true,
+  "darknet_marketplace_threshold": 0.02,
+  "illegal_service_threshold": 0.49,
+  "scam_threshold": 0.09,
+  "gambling_threshold": 1.49,
+  "stolen_assets_threshold": 0.02,
+  "ransom_threshold": 0.01,
+  "sanctions_threshold": 0.15,
+  "terrorism_financing_threshold": 0.01,
+  "exchange_unlicensed_threshold": 20.69,
+  "p2p_exchange_unlicensed_threshold": 0.07,
+  "decentralized_exchange_threshold": 5.22,
+  "exchange_licensed_threshold": 61.96,
+  "online_marketplace_threshold": 0.24,
+  "online_wallet_threshold": 0.32,
+  "p2p_exchange_licensed_threshold": 0.01,
+  "payment_system_threshold": 1.96,
+  "other_threshold": 0.01,
+  "unknown_threshold": 7.28,
+  "currency_symbol": "btc"
+}},
+    {currency: "ETH", data: {"incoming_wallet_checks_enabled": true, "invoice_checks_enabled": true, "operator_notification_interval_minutes": 60, "operator_telegram_chat_id": "-5014592506", "general_risk_score_threshold": 50.0, "check_risky_categories": true, "check_suspicious_categories": true, "check_reliable_categories": true, "check_undefined_categories": true, "darknet_marketplace_threshold": 0.02, "illegal_service_threshold": 0.49, "scam_threshold": 0.09, "gambling_threshold": 1.49, "stolen_assets_threshold": 0.02, "ransom_threshold": 0.01, "sanctions_threshold": 0.15, "terrorism_financing_threshold": 0.01, "exchange_unlicensed_threshold": 20.69, "p2p_exchange_unlicensed_threshold": 0.07, "decentralized_exchange_threshold": 5.22, "exchange_licensed_threshold": 61.96, "online_marketplace_threshold": 0.24, "online_wallet_threshold": 0.32, "p2p_exchange_licensed_threshold": 0.01, "payment_system_threshold": 1.96, "other_threshold": 0.01, "unknown_threshold": 7.28, "currency_symbol": "eth"}},
+    {currency: "TRX", data: {"incoming_wallet_checks_enabled": true, "invoice_checks_enabled": true, "operator_notification_interval_minutes": 60, "operator_telegram_chat_id": "-5014592506", "general_risk_score_threshold": 50.0, "check_risky_categories": true, "check_suspicious_categories": true, "check_reliable_categories": true, "check_undefined_categories": true, "darknet_marketplace_threshold": 0.2, "illegal_service_threshold": 0.49, "scam_threshold": 0.9, "gambling_threshold": 2.49, "stolen_assets_threshold": 0.02, "ransom_threshold": 0.01, "sanctions_threshold": 0.15, "terrorism_financing_threshold": 0.01, "exchange_unlicensed_threshold": 20.69, "p2p_exchange_unlicensed_threshold": 0.07, "decentralized_exchange_threshold": 5.22, "exchange_licensed_threshold": 61.96, "online_marketplace_threshold": 0.24, "online_wallet_threshold": 0.32, "p2p_exchange_licensed_threshold": 0.01, "payment_system_threshold": 1.96, "other_threshold": 0.01, "unknown_threshold": 7.28, "currency_symbol": "trx"}},
+    {currency: "USDC", data: {"incoming_wallet_checks_enabled": true, "invoice_checks_enabled": true, "operator_notification_interval_minutes": 60, "operator_telegram_chat_id": "-5014592506", "general_risk_score_threshold": 50.0, "check_risky_categories": true, "check_suspicious_categories": true, "check_reliable_categories": true, "check_undefined_categories": true, "darknet_marketplace_threshold": 0.02, "illegal_service_threshold": 0.49, "scam_threshold": 0.09, "gambling_threshold": 1.49, "stolen_assets_threshold": 0.02, "ransom_threshold": 0.01, "sanctions_threshold": 0.15, "terrorism_financing_threshold": 0.01, "exchange_unlicensed_threshold": 20.69, "p2p_exchange_unlicensed_threshold": 0.07, "decentralized_exchange_threshold": 5.22, "exchange_licensed_threshold": 61.96, "online_marketplace_threshold": 0.24, "online_wallet_threshold": 0.32, "p2p_exchange_licensed_threshold": 0.01, "payment_system_threshold": 1.96, "other_threshold": 0.01, "unknown_threshold": 7.28, "currency_symbol": "usdc"}},
+    {currency: "USDT", data:{
+  "incoming_wallet_checks_enabled": true,
+  "invoice_checks_enabled": true,
+  "operator_notification_interval_minutes": 60,
+  "operator_telegram_chat_id": "-5014592506",
+  "general_risk_score_threshold": 0,
+  "check_risky_categories": true,
+  "check_suspicious_categories": true,
+  "check_reliable_categories": true,
+  "check_undefined_categories": true,
+  "darknet_marketplace_threshold": 0,
+  "illegal_service_threshold": 0.49,
+  "scam_threshold": 0.09,
+  "gambling_threshold": 1.51,
+  "stolen_assets_threshold": 0.02,
+  "ransom_threshold": 0.01,
+  "sanctions_threshold": 0.15,
+  "terrorism_financing_threshold": 0.01,
+  "exchange_unlicensed_threshold": 20.69,
+  "p2p_exchange_unlicensed_threshold": 0.07,
+  "decentralized_exchange_threshold": 5.22,
+  "exchange_licensed_threshold": 61.96,
+  "online_marketplace_threshold": 0.24,
+  "online_wallet_threshold": 0.31,
+  "p2p_exchange_licensed_threshold": 0.01,
+  "payment_system_threshold": 1.96,
+  "other_threshold": 0.01,
+  "unknown_threshold": 7.29,
+  "currency_symbol": "usdt"
+}}
+];
+
+export const updateUsdcSettings = {"incoming_wallet_checks_enabled": false, "invoice_checks_enabled": false, "operator_notification_interval_minutes": 60, "operator_telegram_chat_id": "https://t.me/+xjk0GDTSBKQyky", "general_risk_score_threshold": 50.0, "check_risky_categories": true, "check_suspicious_categories": true, "check_reliable_categories": true, "check_undefined_categories": false, "darknet_marketplace_threshold": 0.02, "illegal_service_threshold": 0.5, "scam_threshold": 0.06, "gambling_threshold": 1.59, "stolen_assets_threshold": 0.03, "ransom_threshold": 0.31, "sanctions_threshold": 0.25, "terrorism_financing_threshold": 0.99, "exchange_unlicensed_threshold": 22.69, "p2p_exchange_unlicensed_threshold": 0.17, "decentralized_exchange_threshold": 4.22, "exchange_licensed_threshold": 61.97, "online_marketplace_threshold": 0.25, "online_wallet_threshold": 0.33, "p2p_exchange_licensed_threshold": 0.02, "payment_system_threshold": 1.93, "other_threshold": 0.02, "unknown_threshold": 7.23, "currency_symbol": "usdc"};
+
+export const transactionSchema = {
+    id:	'number',
+    ledger_id:	'number',
+    dt_create:	'number',
+    aml_status:	"string",
+    aml_risk_score: 'number',
+    aml_manual_check_required:	'boolean',
+    operation_status:	"string",
+    user_email:	"string",
+    user_cognito_uuid:	"string",
+    user_id:	'number',
+    currency_id:	'number',
+    currency_name:	"string",
+    amount: 'number',
+    amount_without_fee:	'number',
+    fee:'number',	
+    tx_id:	"string",
+    address:	"string",
+    blockchain_network_name:	"string",
+    is_processed:	'boolean',
+    wl_short_name:	"string",
+    memo:	"object"
+};
+
+export const status = [{status: 'pending', id:1},
+    {status:'complete', id:2},
+    {status:'cancel', id:3},
+]
+
+export const statusAml = [{status: 'PENDING'},
+    {status:'SUCCESS'},
+    {status:'FAILED'},
+];
+
+export const amlManual = [{manual: true},
+    {manual: false}
+]

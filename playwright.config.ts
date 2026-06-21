@@ -1,84 +1,82 @@
-// playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
+const { defineConfig, devices } = require('@playwright/test');
 
-// Load environment variables from .env file
-dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-export default defineConfig({
-  // ── Test discovery ──────────────────────────────────────────────
+/**
+ * @see https://playwright.dev/docs/test-configuration
+ */
+module.exports = defineConfig({
   testDir: './tests',
-  testMatch: '**/*.spec.ts',
-
-  // ── Execution ───────────────────────────────────────────────────
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,       // fail CI if test.only left in
-  retries: process.env.CI ? 2 : 0,    // retry flakes in CI only
-  workers: process.env.CI ? '50%' : undefined, // half CPU in CI, auto locally
-
-  // ── Reporting ───────────────────────────────────────────────────
-  reporter: process.env.CI
-    ? [['html', { open: 'never' }], ['github']]
-    : [['html', { open: 'on-failure' }]],
-
-  // ── Timeouts ────────────────────────────────────────────────────
-  timeout: 30_000,                     // per-test timeout
+  timeout: 40000,
   expect: {
-    timeout: 5_000,                    // per-assertion retry timeout
+    toHaveScreenshot: {maxDiffPixelRatio: 0.01}
   },
-
-  // ── Shared browser context options ──────────────────────────────
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 1 : 0,
+  workers: process.env.CI ? 2 : undefined,
+  reporter: [['list'], ['html']],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
-    storageState: '.auth/user.json',
-    actionTimeout: 10_000,             // click, fill, etc.
-    navigationTimeout: 15_000,         // goto, waitForURL, etc.
-
-    // Artifact collection
-    trace: 'on-first-retry',          // full trace on first retry only
-    screenshot: 'only-on-failure',     // screenshot on failure
-    video: 'retain-on-failure',        // video only kept for failures
-
-    // Sensible defaults
-    locale: 'en-US',
-    timezoneId: 'America/New_York',
-    extraHTTPHeaders: {
-      'x-test-automation': 'playwright',
-    },
+    trace: 'on',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure'
   },
 
-  // ── Projects (browser targets) ─────────────────────────────────
   projects: [
     {
+      name: 'api-public'
+    },
+    {
+      name: 'api-tests',
+      dependencies: ["setup"]
+    },
+    {
+      name: "setup",
+      testDir: "./",
+      testMatch: "global-setup.ts"
+    },
+    {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      dependencies: ["setup"],
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1920, height: 1080 }},
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      dependencies: ["setup"],
+      use: { ...devices['Desktop Firefox'], viewport: { width: 1920, height: 1080 }},
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      dependencies: ["setup"],
+      use: { ...devices['Desktop Safari'], viewport: { width: 1920, height: 1080 }},
     },
     {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 7'] },
+      name: 'lending-chromium',
+      use: { ...devices['Desktop Chrome']},
     },
     {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 14'] },
+      name: 'lending-firefox',
+      use: { ...devices['Desktop Firefox']},
+    },
+    {
+      name: 'lending-webkit',
+      use: { ...devices['Desktop Safari']},
+    },
+    {
+      name: 'android-app',
+      dependencies: ["setup"],
+      use: { ...devices['Pixel 7']},
+    },
+    {
+      name: 'android-lending',
+      use: { ...devices['Pixel 7']},
+    },
+    {
+      name: 'ios-app',
+      dependencies: ["setup"],
+      use: { ...devices['iPhone 15 Pro']},
+    },
+    {
+      name: 'ios-lending',
+      use: { ...devices['iPhone 15 Pro']},
     },
   ],
-
-  // ── Dev server ──────────────────────────────────────────────────
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,                  // 2 min for cold builds
-    stdout: 'pipe',
-    stderr: 'pipe',
-  },
 });

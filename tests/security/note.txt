@@ -1,0 +1,176 @@
+1) https://medium.com/@sirigirivijay123/fortify-your-tests-automated-security-testing-with-playwright-owasp-zap-ef45342efd63
+
+Two important constraints up-front:
+
+Do this only on systems you own or have explicit permission to test. Running injection tests against production or third-party systems can be illegal or disruptive.
+
+Prefer a test/staging database and a test environment (not prod). Keep payloads non-destructive and assert safely.
+
+Below I’ll give: (A) a short methodology, (B) example payload lists (benign, minimal), (C) Playwright API test patterns (parameterized), and (D) what to assert and extra checks.
+
+A — Methodology (high level)
+
+Scope & permission — confirm allowed endpoints/inputs and use a test DB.
+
+Identify input vectors — JSON body fields, query params, headers, path segments, form data, cookies.
+
+Run non-destructive payloads first (reflected XSS, simple SQL indicators).
+
+Assert safe behavior:
+
+Server does not reflect raw <script> (or unescaped payload) into rendered HTML or JSON.
+
+Server returns proper error codes for invalid input (400/422), not 500 with DB/stack trace.
+
+No SQL error text exposed to user.
+
+For stored XSS test, confirm payload is stored safely (or sanitized) and rendering layer escapes it.
+
+Use a curated payload list (OWASP, FuzzDB) and increase coverage over time.
+
+Log and report potential issues — don’t exploit further.
+
+B — Minimal example payloads
+
+(Use these to start — they’re intentionally simple and non-destructive.)
+
+XSS candidates (reflected/storage checks):
+
+const xssPayloads = [
+  "<script>alert(1)</script>",
+  "\"><script>alert(1)</script>",
+  "<img src=x onerror=alert(1)>",
+  "<svg/onload=alert(1)>"
+];
+
+
+SQL injection indicator payloads (non-destructive checks):
+
+const sqliPayloads = [
+  "' OR '1'='1",
+  "'; -- ",
+  "\" OR \"\" = \"",
+  "1; SELECT 1" // harmless indicator-like string
+];
+
+
+(When you move to deeper security testing use specialized fuzzers and tools — see notes below.)
+
+C — Playwright API test patterns (parameterized)
+
+Example: test an API endpoint that accepts JSON comment and email fields. The test sends payloads and asserts the API responds safely.
+
+import { test, expect } from '@playwright/test';
+import fs from 'fs';
+
+const xssPayloads = [
+  "<script>alert(1)</script>",
+  "\"><script>alert(1)</script>",
+  "<img src=x onerror=alert(1)>"
+];
+
+test.describe('Injection checks (reflected XSS + SQL indicator)', () => {
+  test.beforeEach(() => {
+    // load token from global-setup output or auth file
+    authData = JSON.parse(fs.readFileSync('./auth/ApiUser1Auth.json','utf8'));
+  });
+
+  // XSS reflected tests
+  xssPayloads.forEach((payload, i) => {
+    test(`Reflected XSS payload ${i}`, async ({ request }) => {
+      const body = {
+        comment: payload,
+        email: "qa+user@bitbanker.org"
+      };
+
+      const response = await request.post('/latest/comments', {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body) // explicit JSON
+      });
+
+      // Basic safety checks
+      expect.soft(response.status()).not.toBe(500);                 // avoid server errors
+      const text = await response.text();
+
+      // 1) Server should not echo raw unescaped <script> into response body
+      expect.soft(text.includes(payload)).toBeFalsy();
+
+      // 2) If API returns HTML pages (edge case), ensure scripts are escaped
+      // e.g. check for escaped characters or absence of <script>
+      expect.soft(text).not.toContain('<script>alert(1)</script>');
+    });
+  });
+
+  // SQL indicator tests (non-destructive)
+  const sqliPayloads = ["' OR '1'='1", "'; -- ", "\" OR \"\" = \""];
+
+  sqliPayloads.forEach((payload, i) => {
+    test(`SQL indicator payload ${i}`, async ({ request }) => {
+      const body = { note: payload, email: "qa+user@bitbanker.org" };
+      const response = await request.post('/latest/notes', {
+        headers: {
+          Authorization: `Bearer ${authData.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+
+      // should not be server error, should not return SQL error text
+      expect.soft(response.status()).not.toBe(500);
+      const text = await response.text();
+
+      // Look for evidence of SQL errors leaking
+      const sqlErrorPatterns = ['SQL', 'syntax error', 'ORA-', 'psql', 'mysql', 'SQLITE_ERROR'];
+      for (const p of sqlErrorPatterns) {
+        expect.soft(text.toLowerCase()).not.toContain(p.toLowerCase());
+      }
+    });
+  });
+
+});
+
+
+Change the endpoints, field names, headers to match your API. Use request.get (query param tests) or request.put/patch (other vectors).
+
+D — What to assert (checklist)
+
+For each payload send, assert at least:
+
+response.status() is not 500 (no server error).
+
+Response does not contain unescaped payload (for reflected tests). For JSON APIs you may assert that responseBody.someField !== payload. For HTML endpoints, check for <script> appearance.
+
+Response does not include DB errors or stack traces.
+
+If the payload should be stored (stored XSS), follow-up read the stored value and assert it is properly encoded/escaped when rendered or that the stored value is sanitized (depends on app policy).
+
+Confirm DB state unchanged for destructive-sensitive fields (read via safe API or test DB).
+
+For query params, test both raw and URL-encoded variants: ?q=<script> and ?q=%3Cscript%3E.
+
+E — Additional tips & best practices
+
+Use curated payload lists: OWASP XSS Cheat Sheet, FuzzDB, PayloadsAllTheThings. Keep a local copy — don’t paste massive lists into CI.
+
+Parameterize tests so you can add payloads without duplicating code.
+
+Record response bodies (to logs) when a test fails so security team can triage.
+
+Rate-limit tests and avoid noisy runs (BruteForceDefense).
+
+For stored XSS: send payload via create endpoint, then GET the resource and assert output is escaped.
+
+For SQLi time-based detection (advanced): avoid blind exploitation in CI. Use a separate security scan (penetration testing) with permission and tools built for that (sqlmap, but only in authorized environments).
+
+Headers & CSP: for XSS checks, validate presence of Content-Security-Policy, X-XSS-Protection (if used), and HttpOnly/Secure on cookies.
+
+Sanitization expectation: decide if your system should reject payloads, sanitize them, or escape at render time — tests must reflect intended behavior.
+
+F — Ethics & tooling
+
+If you want deeper automated scans, use OWASP ZAP, Burp, or security specialist tools in a controlled test environment — and not in CI against production.
+
+Share findings with devs and fix using parameterized queries + prepared statements (SQL), and proper output encoding/escaping (HTML/JS contexts).
